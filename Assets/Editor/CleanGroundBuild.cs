@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.SceneManagement;
+using UnityEditor.Build;
 using UnityEngine.SceneManagement;
 
 public class CleanGroundBuild : IPreprocessBuildWithReport
