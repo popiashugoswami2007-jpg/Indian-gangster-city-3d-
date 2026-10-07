@@ -1,39 +1,32 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 
 public class CleanGroundBuild : IPreprocessBuildWithReport
 {
     public int callbackOrder => 0;
 
-    public void OnPreprocessBuild(UnityEditor.Build.Reporting.BuildReport report)
+    public void OnPreprocessBuild(BuildReport report)
     {
         var scene = EditorSceneManager.OpenScene("Assets/Scenes/World.unity");
+
+        string[] keep = {
+            "Grounds","Plants","Road","Mountains","Directional Light",
+            "Global Volume","Camera","SideWalk","Sky"
+        };
 
         foreach (var root in scene.GetRootGameObjects())
         {
             string n = root.name.ToLowerInvariant();
+            bool ok = false;
 
-            bool keep =
-                n.Contains("ground") ||
-                n.Contains("road") ||
-                n.Contains("plant") ||
-                n.Contains("tree") ||
-                n.Contains("vegetation") ||
-                n.Contains("pole") ||
-                n.Contains("lamp") ||
-                n.Contains("streetlight") ||
-                n.Contains("street_light") ||
-                n.Contains("light pole") ||
-                n.Contains("lightpole") ||
-                n == "camera" ||
-                n == "directional light" ||
-                n == "global volume" ||
-                n.Contains("sky");
+            foreach (var k in keep)
+                if (n.Contains(k.ToLowerInvariant())) { ok = true; break; }
 
-            if (!keep)
-                Object.DestroyImmediate(root);
+            if (!ok)
+                root.SetActive(false);
         }
 
         EditorSceneManager.SaveScene(scene);
